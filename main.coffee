@@ -6,6 +6,11 @@ V3 = T.Vector3
 randy = (x)-> Math.random()*x-x/2
 rand = (x)-> Math.random()*x
 
+
+###################################
+# SETUP
+###################################
+
 # relative to this file
 P.scripts.worker = './lib/physijs_worker.js'
 # relative to the above worker file
@@ -73,22 +78,49 @@ scene.add(skyBox)
 
 
 ###################################
+# POOL TABLE
+###################################
 
+L = 2000
+W = 1000
+
+# SURFACE
 ground_material = P.createMaterial(
-	new T.MeshBasicMaterial(color: 0x006D10)
+	new T.MeshBasicMaterial(color: 0x3C8546)
 	0.8 # high friction
 	0.3 # low restitution
 )
 
 ground = new P.BoxMesh(
-	new T.BoxGeometry(2000, 50, 1000)
+	new T.BoxGeometry(L, 50, W)
 	ground_material
 	0 # mass, 0 = static
 )
-ground.position.set(0, -500, 0)
+ground.position.set(0, -25, 0)
 ground.receiveShadow = true
 scene.add(ground)
 
+# BUMPERS
+bumper_material = P.createMaterial(
+	new T.MeshBasicMaterial(color: 0x002E00)
+	0.8 # high friction
+	0.3 # low restitution
+)
+
+addBumper = ()->
+	bumper = new P.BoxMesh(
+		new T.BoxGeometry(L, 20, W)
+		bumper_material
+		0 # mass, 0 = static
+	)
+	bumper.position.set(0, -500, 0)
+	bumper.rotation.set(0, -500, 0)
+	bumper.receiveShadow = true
+	scene.add(bumper)
+	
+
+###################################
+# BALLS
 ###################################
 
 balls = for i in [0..15]
@@ -145,11 +177,9 @@ balls = for i in [0..15]
 			emissive: 0xaaaaaa
 			specular: 0xbbbbbb
 			map: map
-		undefined
-		{ restitution: 100.5, friction: 0.9 }
 	)
 	
-	ball.position.set(randy(500), randy(500), randy(500))
+	ball.position.set(randy(500), randy(500)+500, randy(500))
 	ball.rotation.x = rand(TAU)
 	ball.rotation.y = rand(TAU)
 	ball.rotation.z = rand(TAU)
@@ -157,6 +187,8 @@ balls = for i in [0..15]
 	
 	ball
 
+###################################
+# INTERACTION
 ###################################
 
 ###
