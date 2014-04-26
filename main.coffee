@@ -6,8 +6,10 @@ V3 = T.Vector3
 randy = (x)-> Math.random()*x-x/2
 rand = (x)-> Math.random()*x
 
-P.scripts.worker = './lib/physijs_worker.js';
-P.scripts.ammo = './ammo.js';
+# relative to this file
+P.scripts.worker = './lib/physijs_worker.js'
+# relative to the above worker file
+P.scripts.ammo = './ammo.js'
 
 
 # SCENE
@@ -76,18 +78,18 @@ ground_material = P.createMaterial(
 	new T.MeshBasicMaterial(color: 0x006D10)
 	0.8 # high friction
 	0.3 # low restitution
-);
-#ground_material.map.wrapS = ground_material.map.wrapT = T.RepeatWrapping
-#ground_material.map.repeat.set(3, 3)
+)
 
 ground = new P.BoxMesh(
-	new T.CubeGeometry(2000, 50, 1000)
+	new T.BoxGeometry(2000, 50, 1000)
 	ground_material
 	0 # mass, 0 = static
 )
 ground.position.set(0, -500, 0)
 ground.receiveShadow = true
 scene.add(ground)
+
+###################################
 
 balls = for i in [0..15]
 	canvas = document.createElement('canvas')
@@ -106,7 +108,9 @@ balls = for i in [0..15]
 		'#FCCF04','#1544AD','#E81D13','#7C2E7C','#FF6901','#00680F','#8A0A11','#0B0806'
 		'#FCCF04','#1544AD','#E81D13','#7C2E7C','#FF6901','#00680F','#8A0A11','#0B0806'
 	]
+	
 	ctx.fillStyle = colors[i]
+	
 	if i > 8
 		a = 0.3
 		ctx.fillRect(0, H*a, W, H*(1-a*2))
@@ -114,7 +118,6 @@ balls = for i in [0..15]
 		ctx.fillRect(0, 0, W, H)
 	
 	if i > 0
-		
 		ctx.translate(W/2, H/2)
 		ctx.scale(0.5, 0.9)
 		
@@ -155,6 +158,7 @@ balls = for i in [0..15]
 	ball
 
 ###################################
+
 ###
 unprojector = new T.Projector()
 mouse = {x: 0, y: 0}
@@ -165,7 +169,7 @@ $('body').on 'mousemove', (e)->
 	mouse.x = (e.originalEvent.offsetX / WIDTH) * 2 - 1
 	mouse.y = (e.originalEvent.offsetY / HEIGHT) * -2 + 1
 	
-	vector = new T.Vector3(mouse.x, mouse.y, 1)
+	vector = new V3(mouse.x, mouse.y, 1)
 	unprojector.unprojectVector(vector, camera)
 	ray = new T.Raycaster(camera.position, vector.sub(camera.position).normalize())
 	

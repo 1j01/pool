@@ -97,7 +97,7 @@ ground_material = P.createMaterial(new T.MeshBasicMaterial({
   color: 0x006D10
 }), 0.8, 0.3);
 
-ground = new P.BoxMesh(new T.CubeGeometry(2000, 50, 1000), ground_material, 0);
+ground = new P.BoxMesh(new T.BoxGeometry(2000, 50, 1000), ground_material, 0);
 
 ground.position.set(0, -500, 0);
 
@@ -172,7 +172,7 @@ $('body').on 'mousemove', (e)->
 	mouse.x = (e.originalEvent.offsetX / WIDTH) * 2 - 1
 	mouse.y = (e.originalEvent.offsetY / HEIGHT) * -2 + 1
 	
-	vector = new T.Vector3(mouse.x, mouse.y, 1)
+	vector = new V3(mouse.x, mouse.y, 1)
 	unprojector.unprojectVector(vector, camera)
 	ray = new T.Raycaster(camera.position, vector.sub(camera.position).normalize())
 	
