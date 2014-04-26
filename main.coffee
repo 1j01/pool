@@ -81,8 +81,8 @@ scene.add(skyBox)
 # POOL TABLE
 ###################################
 
-ptl = 2000
 ptw = 1000
+ptl = 2 * ptw
 
 # SURFACE
 ground_canvas = document.createElement("canvas")
@@ -127,22 +127,28 @@ scene.add(ground)
 
 # BUMPERS
 bumper_material = P.createMaterial(
-	new T.MeshBasicMaterial(color: 0x002E00)
+	new T.MeshBasicMaterial(color: 0x002E00, map: ground_tex)
 	0.8 # high friction
 	0.3 # low restitution
 )
-
-addBumper = ()->
+addBumper = (lengthwise, widthwise, r)->
 	bumper = new P.BoxMesh(
-		new T.BoxGeometry(ptl, 20, ptw, 5, 5, 5)
+		new T.BoxGeometry(ptw-120, 50, 50, 5, 5, 5)
 		bumper_material
 		0 # mass, 0 = static
 	)
-	bumper.position.set(0, -500, 0)
-	bumper.rotation.set(0, -500, 0)
+	bumper.position.set(lengthwise * ptw, 5, widthwise * ptw)
+	bumper.rotation.set(0, r, 0)
 	bumper.receiveShadow = true
 	scene.add(bumper)
 	
+foo = 0.48
+addBumper(foo, 0.5, 0)
+addBumper(foo, -0.5, 0)
+addBumper(-foo, 0.5, 0)
+addBumper(-foo, -0.5, 0)
+addBumper(1, 0, TAU/4)
+addBumper(-1, 0, TAU/4)
 
 ###################################
 # BALLS
