@@ -25,10 +25,10 @@ scene.setGravity(new V3(0, -300, 0))
 WIDTH = window.innerWidth
 HEIGHT = window.innerHeight
 ASPECT = WIDTH / HEIGHT
-VIEW_ANGLE = 45
+FOV = 45
 NEAR = 0.1
 FAR = 20000
-camera = new T.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
+camera = new T.PerspectiveCamera(FOV, ASPECT, NEAR, FAR)
 scene.add(camera)
 camera.position.set(150, 550, 400)
 camera.lookAt(scene.position)
@@ -81,18 +81,43 @@ scene.add(skyBox)
 # POOL TABLE
 ###################################
 
-L = 2000
-W = 1000
+ptl = 2000
+ptw = 1000
 
 # SURFACE
+ground_canvas = document.createElement("canvas")
+ground_canvas.width = gcw =
+ground_canvas.height = gch = 512
+ground_ctx = ground_canvas.getContext("2d")
+
+id = ground_ctx.getImageData(0, 0, gcw, gch)
+
+i = 0
+while i < id.data.length
+	id.data[i+0] =
+	id.data[i+1] =
+	id.data[i+2] =
+		255 - rand(25)
+	
+	id.data[i+3] = 255
+	
+	i += 4
+
+ground_ctx.putImageData(id, 0, 0, 0, 0, gcw, gch)
+
+ground_tex = new T.Texture(ground_canvas)
+ground_tex.wrapS = ground_tex.wrapT = T.RepeatWrapping
+ground_tex.repeat.set(4, 2)
+ground_tex.needsUpdate = true
+
 ground_material = P.createMaterial(
-	new T.MeshBasicMaterial(color: 0x3C8546)
+	new T.MeshBasicMaterial(color: 0x3C8546, map: ground_tex)
 	0.8 # high friction
 	0.3 # low restitution
 )
 
 ground = new P.BoxMesh(
-	new T.BoxGeometry(L, 50, W)
+	new T.BoxGeometry(ptl, 50, ptw)
 	ground_material
 	0 # mass, 0 = static
 )
@@ -109,7 +134,7 @@ bumper_material = P.createMaterial(
 
 addBumper = ()->
 	bumper = new P.BoxMesh(
-		new T.BoxGeometry(L, 20, W)
+		new T.BoxGeometry(ptl, 20, ptw, 5, 5, 5)
 		bumper_material
 		0 # mass, 0 = static
 	)
@@ -125,15 +150,15 @@ addBumper = ()->
 
 balls = for i in [0..15]
 	canvas = document.createElement('canvas')
-	W = H = 1024
-	canvas.width = W
-	canvas.height = H
+	bcw = bch = 1024
+	canvas.width = bcw
+	canvas.height = bch
 	ctx = canvas.getContext('2d')
 	
 	white = '#FEFFEA'
 	
 	ctx.fillStyle = white
-	ctx.fillRect(0, 0, W, H)
+	ctx.fillRect(0, 0, bcw, bch)
 	
 	colors = [
 		'(cue ball)'
@@ -145,24 +170,24 @@ balls = for i in [0..15]
 	
 	if i > 8
 		a = 0.3
-		ctx.fillRect(0, H*a, W, H*(1-a*2))
+		ctx.fillRect(0, bch*a, bcw, bch*(1-a*2))
 	else
-		ctx.fillRect(0, 0, W, H)
+		ctx.fillRect(0, 0, bcw, bch)
 	
 	if i > 0
-		ctx.translate(W/2, H/2)
+		ctx.translate(bcw/2, bch/2)
 		ctx.scale(0.5, 0.9)
 		
 		ctx.beginPath()
-		ctx.arc(0, 0, H/7, 0, TAU)
+		ctx.arc(0, 0, bch/7, 0, TAU)
 		ctx.fillStyle = white
 		ctx.fill()
 		
 		ctx.textBaseline = 'middle'
 		ctx.textAlign = 'center'
-		ctx.font = (H/4)+'px Georgia'
+		ctx.font = (bch/4)+'px Georgia'
 		ctx.fillStyle = 'black'
-		ctx.fillText(i, 0, -H*0.04)
+		ctx.fillText(i, 0, -bch*0.04)
 	else
 		# little red dot maybe?
 	
