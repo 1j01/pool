@@ -222,11 +222,10 @@ balls = for i in [0..15]
 # INTERACTION
 ###################################
 
-###
 unprojector = new T.Projector()
 mouse = {x: 0, y: 0}
 
-$('body').on 'mousemove', (e)-> 
+$('body').on 'mousemove', (e)->
 	e.preventDefault()
 	
 	mouse.x = (e.originalEvent.offsetX / WIDTH) * 2 - 1
@@ -239,23 +238,35 @@ $('body').on 'mousemove', (e)->
 	intersects = ray.intersectObjects(balls)
 	
 	if mouse.intersect
-		mid = mouse.intersect.face.materialIndex
-		materials[mid].emissive.setHex(0x000000)
-		materials[mid].needsUpdate = true
+		mat = mouse.intersect.object.material
+		mat.emissive.setHex(mouse.oeh)
+		mat.needsUpdate = true
+		
+		$('body').css(cursor: "default")
 	
 	mouse.intersect = intersect = intersects[0]
 	
-	if mouse.intersect and e.type isnt 'mousemove'
-		mid = intersect.face.materialIndex
-		materials[mid].emissive.setHex(0xa0a0a0)
-		materials[mid].needsUpdate = true
+	if mouse.intersect
+		mat = mouse.intersect.object.material
+		mouse.oeh = mat.emissive.getHex()
+		mat.emissive.setHex(0xffffff)
+		mat.needsUpdate = true
 		
-		canvas = materials[mid].map.image
-		#canvas = canvases[mid]
-		ctx = canvas.getContext('2d')
-		ctx.fillStyle = '#f0f'
-		ctx.fillRect(50, 50, 50, 50)
-###
+		$('body').css(cursor: "pointer")
+
+$('body').on 'mousedown', (e)->
+	if mouse.intersect
+		e.preventDefault()
+		e.stopPropagation()
+		
+		ball = mouse.intersect.object
+		force = mouse.intersect.point.sub(ball.position)
+		force.multiplyScalar(-30)
+		ball.setLinearVelocity(force)
+
+#========#
+# ...GO! #
+#========#
 
 do animate = ->
 	requestAnimationFrame(animate)
