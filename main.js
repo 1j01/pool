@@ -178,9 +178,9 @@ balls = (function() {
       ctx.fill();
       ctx.textBaseline = 'middle';
       ctx.textAlign = 'center';
-      ctx.font = (bch / 4) + 'px Georgia';
+      ctx.font = (bch / 4) + 'px Arial';
       ctx.fillStyle = 'black';
-      ctx.fillText(i, 0, -bch * 0.04);
+      ctx.fillText(i, 0, -bch * 0.0);
     } else {
 
     }
@@ -190,7 +190,7 @@ balls = (function() {
       color: 0xffffff,
       shininess: 100,
       emissive: 0xaaaaaa,
-      specular: 0xbbbbbb,
+      specular: 0x222222,
       map: map
     }));
     ball.position.set(randy(500), randy(500) + 500, randy(500));

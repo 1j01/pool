@@ -185,9 +185,9 @@ balls = for i in [0..15]
 		
 		ctx.textBaseline = 'middle'
 		ctx.textAlign = 'center'
-		ctx.font = (bch/4)+'px Georgia'
+		ctx.font = (bch/4)+'px Arial'
 		ctx.fillStyle = 'black'
-		ctx.fillText(i, 0, -bch*0.04)
+		ctx.fillText(i, 0, -bch*0.0)
 	else
 		# little red dot maybe?
 	
@@ -200,7 +200,7 @@ balls = for i in [0..15]
 			color: 0xffffff
 			shininess: 100
 			emissive: 0xaaaaaa
-			specular: 0xbbbbbb
+			specular: 0x222222
 			map: map
 	)
 	
