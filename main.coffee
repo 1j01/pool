@@ -1,9 +1,18 @@
 
-T = THREE
 TAU = Math.PI + Math.PI # or C/r
+T = THREE
+P = Physijs
+V3 = T.Vector3
+randy = (x)-> Math.random()*x-x/2
+rand = (x)-> Math.random()*x
+
+P.scripts.worker = './lib/physijs_worker.js';
+P.scripts.ammo = './ammo.js';
+
 
 # SCENE
-scene = new T.Scene()
+scene = new P.Scene(fixedTimeStep: 1/30)
+scene.setGravity(new V3(0, -300, 0))
 
 # CAMERA
 WIDTH = window.innerWidth
@@ -14,7 +23,7 @@ NEAR = 0.1
 FAR = 20000
 camera = new T.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR)
 scene.add(camera)
-camera.position.set(0, 150, 400)
+camera.position.set(150, 550, 400)
 camera.lookAt(scene.position)
 
 # RENDERER
@@ -41,8 +50,8 @@ $(window).on 'resize', ->
 controls = new T.OrbitControls(camera, renderer.domElement)
 
 # LIGHTING
-light = new T.PointLight(0xffffff, 1, 1000)
-light.position.set(0, 0, 0)
+light = new T.PointLight(0xffffff, 1, 10000)
+light.position.set(0, 100, 0)
 scene.add(light)
 
 ###
@@ -56,12 +65,29 @@ scene.add(skyLight)
 
 # SKYBOX/FOG
 skyBoxGeometry = new T.BoxGeometry(10000, 10000, 10000)
-skyBoxMaterial = new T.MeshBasicMaterial(color: 0x006D10, side: T.BackSide)
+skyBoxMaterial = new T.MeshBasicMaterial(color: 0xaabDf0, side: T.BackSide)
 skyBox = new T.Mesh(skyBoxGeometry, skyBoxMaterial)
 scene.add(skyBox)
 
 
 ###################################
+
+ground_material = P.createMaterial(
+	new T.MeshBasicMaterial(color: 0x006D10)
+	0.8 # high friction
+	0.3 # low restitution
+);
+#ground_material.map.wrapS = ground_material.map.wrapT = T.RepeatWrapping
+#ground_material.map.repeat.set(3, 3)
+
+ground = new P.BoxMesh(
+	new T.CubeGeometry(2000, 50, 1000)
+	ground_material
+	0 # mass, 0 = static
+)
+ground.position.set(0, -500, 0)
+ground.receiveShadow = true
+scene.add(ground)
 
 balls = for i in [0..15]
 	canvas = document.createElement('canvas')
@@ -108,21 +134,23 @@ balls = for i in [0..15]
 	map = new T.Texture(canvas)
 	map.needsUpdate = true
 
-	ball = new T.Mesh(
+	ball = new P.SphereMesh(
 		new T.SphereGeometry(25, 25, 25)
-		new THREE.MeshPhongMaterial
+		new T.MeshPhongMaterial
 			color: 0xffffff
-			shininess: 100.0
+			shininess: 100
 			emissive: 0xaaaaaa
 			specular: 0xbbbbbb
 			map: map
+		undefined
+		{ restitution: 100.5, friction: 0.9 }
 	)
+	
+	ball.position.set(randy(500), randy(500), randy(500))
+	ball.rotation.x = rand(TAU)
+	ball.rotation.y = rand(TAU)
+	ball.rotation.z = rand(TAU)
 	scene.add(ball)
-	rand = (x)-> Math.random()*x-x/2
-	ball.position.set(rand(500), rand(500), 50)
-	ball.rotation.x = rand(10)
-	ball.rotation.y = rand(10)
-	ball.rotation.z = rand(10)
 	
 	ball
 
@@ -164,5 +192,6 @@ $('body').on 'mousemove', (e)->
 
 do animate = ->
 	requestAnimationFrame(animate)
+	scene.simulate(undefined, 1)
 	renderer.render(scene, camera)
 	controls.update()
