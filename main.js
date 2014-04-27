@@ -154,15 +154,15 @@ foo = 0.48;
 
 addBumper(foo, 0.5, 0);
 
-addBumper(foo, -0.5, 0);
+addBumper(foo, -0.5, TAU / 2);
 
 addBumper(-foo, 0.5, 0);
 
-addBumper(-foo, -0.5, 0);
+addBumper(-foo, -0.5, TAU / 2);
 
 addBumper(1, 0, TAU / 4);
 
-addBumper(-1, 0, TAU / 4);
+addBumper(-1, 0, -TAU / 4);
 
 balls = (function() {
   var _i, _results;
