@@ -55,14 +55,14 @@ renderer.setSize(WIDTH, HEIGHT);
 
 document.body.appendChild(renderer.domElement);
 
-$(window).on('resize', function() {
+window.onresize = function() {
   WIDTH = window.innerWidth;
   HEIGHT = window.innerHeight;
   ASPECT = WIDTH / HEIGHT;
   renderer.setSize(WIDTH, HEIGHT);
   camera.aspect = ASPECT;
   return camera.updateProjectionMatrix();
-});
+};
 
 controls = new T.OrbitControls(camera, renderer.domElement);
 
@@ -225,11 +225,11 @@ mouse = {
   y: 0
 };
 
-$('body').on('mousemove', function(e) {
+document.body.onmousemove = function(e) {
   var intersect, intersects, mat, ray, vector;
   e.preventDefault();
-  mouse.x = (e.originalEvent.offsetX / WIDTH) * 2 - 1;
-  mouse.y = (e.originalEvent.offsetY / HEIGHT) * -2 + 1;
+  mouse.x = (e.offsetX / WIDTH) * 2 - 1;
+  mouse.y = (e.offsetY / HEIGHT) * -2 + 1;
   vector = new V3(mouse.x, mouse.y, 1);
   unprojector.unprojectVector(vector, camera);
   ray = new T.Raycaster(camera.position, vector.sub(camera.position).normalize());
@@ -238,9 +238,7 @@ $('body').on('mousemove', function(e) {
     mat = mouse.intersect.object.material;
     mat.emissive.setHex(mouse.oeh);
     mat.needsUpdate = true;
-    $('body').css({
-      cursor: "default"
-    });
+    document.body.style.cursor = "default";
   }
   mouse.intersect = intersect = intersects[0];
   if (mouse.intersect) {
@@ -248,13 +246,11 @@ $('body').on('mousemove', function(e) {
     mouse.oeh = mat.emissive.getHex();
     mat.emissive.setHex(0xffffff);
     mat.needsUpdate = true;
-    return $('body').css({
-      cursor: "pointer"
-    });
+    return document.body.style.cursor = "pointer";
   }
-});
+};
 
-$('body').on('mousedown', function(e) {
+document.body.onmousedown = function(e) {
   var force;
   if (mouse.intersect) {
     e.preventDefault();
@@ -264,7 +260,7 @@ $('body').on('mousedown', function(e) {
     force.multiplyScalar(-30);
     return ball.setLinearVelocity(force);
   }
-});
+};
 
 (animate = function() {
   requestAnimationFrame(animate);

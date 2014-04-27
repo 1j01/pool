@@ -43,7 +43,7 @@ renderer =
 renderer.setSize(WIDTH, HEIGHT)
 document.body.appendChild(renderer.domElement)
 
-$(window).on 'resize', ->
+window.onresize = ->
 	WIDTH = window.innerWidth
 	HEIGHT = window.innerHeight
 	ASPECT = WIDTH / HEIGHT
@@ -225,11 +225,11 @@ balls = for i in [0..15]
 unprojector = new T.Projector()
 mouse = {x: 0, y: 0}
 
-$('body').on 'mousemove', (e)->
+document.body.onmousemove = (e)->
 	e.preventDefault()
 	
-	mouse.x = (e.originalEvent.offsetX / WIDTH) * 2 - 1
-	mouse.y = (e.originalEvent.offsetY / HEIGHT) * -2 + 1
+	mouse.x = (e.offsetX / WIDTH) * 2 - 1
+	mouse.y = (e.offsetY / HEIGHT) * -2 + 1
 	
 	vector = new V3(mouse.x, mouse.y, 1)
 	unprojector.unprojectVector(vector, camera)
@@ -242,7 +242,7 @@ $('body').on 'mousemove', (e)->
 		mat.emissive.setHex(mouse.oeh)
 		mat.needsUpdate = true
 		
-		$('body').css(cursor: "default")
+		document.body.style.cursor = "default"
 	
 	mouse.intersect = intersect = intersects[0]
 	
@@ -252,9 +252,9 @@ $('body').on 'mousemove', (e)->
 		mat.emissive.setHex(0xffffff)
 		mat.needsUpdate = true
 		
-		$('body').css(cursor: "pointer")
+		document.body.style.cursor = "pointer"
 
-$('body').on 'mousedown', (e)->
+document.body.onmousedown = (e)->
 	if mouse.intersect
 		e.preventDefault()
 		e.stopPropagation()
@@ -264,9 +264,9 @@ $('body').on 'mousedown', (e)->
 		force.multiplyScalar(-30)
 		ball.setLinearVelocity(force)
 
-#========#
-# ...GO! #
-#========#
+#=========#
+# ...GO!  #
+#=========#
 
 do animate = ->
 	requestAnimationFrame(animate)
