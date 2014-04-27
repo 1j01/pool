@@ -154,6 +154,18 @@ addBumper(-1, 0, -TAU/4)
 # BALLS
 ###################################
 
+ball_hit_ball = new Howl
+	urls: ['sound/ball-hit-ball.ogg']
+	volume: 0.5
+
+cue_hit_ball = new Howl
+	urls: ['sound/cue-hit-ball.ogg']
+	volume: 1
+
+ball_hit_fuzz = new Howl
+	urls: ['sound/ball-hit-fuzz.ogg']
+	volume: 1
+
 balls = for i in [0..15]
 	canvas = document.createElement('canvas')
 	bcw = bch = 1024
@@ -216,6 +228,21 @@ balls = for i in [0..15]
 	ball.rotation.z = rand(TAU)
 	scene.add(ball)
 	
+	ball.addEventListener 'collision', (collided_with, linearVelocity, angularVelocity)->
+		
+		vel = linearVelocity.length()
+		vol = Math.pow(vel, 1.4) / 150
+		
+		if collided_with instanceof P.SphereMesh
+			ball_hit_ball.volume(vel/650)
+			ball_hit_ball.play()
+		else if collided_with.material is bumper_material
+			ball_hit_fuzz.volume(vel/65)
+			ball_hit_fuzz.play()
+		else if collided_with.material is ground_material
+			ball_hit_fuzz.volume(vel/650)
+			ball_hit_fuzz.play()
+		
 	ball
 
 ###################################
@@ -258,6 +285,8 @@ document.body.onmousedown = (e)->
 	if mouse.intersect
 		e.preventDefault()
 		e.stopPropagation()
+		
+		cue_hit_ball.play()
 		
 		ball = mouse.intersect.object
 		force = mouse.intersect.point.sub(ball.position)
