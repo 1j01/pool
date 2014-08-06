@@ -71,11 +71,16 @@ scene.add(skyLight)
 ###
 
 # SKYBOX/FOG
-skyBoxGeometry = new T.BoxGeometry(10000, 10000, 10000)
-skyBoxMaterial = new T.MeshBasicMaterial(color: 0xaabDf0, side: T.BackSide)
-skyBox = new T.Mesh(skyBoxGeometry, skyBoxMaterial)
-scene.add(skyBox)
+materialArray =
+	for dir in ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"]
+		new T.MeshBasicMaterial
+			map: T.ImageUtils.loadTexture "skybox/#{dir}.png"
+			side: T.BackSide
 
+skyBoxGeometry = new T.BoxGeometry(10000, 10000, 10000)
+skyBoxMaterial = new T.MeshFaceMaterial(materialArray)
+skyBox = new T.Mesh(skyBoxGeometry, skyBoxMaterial)
+scene.add skyBox
 
 ###################################
 # POOL TABLE
